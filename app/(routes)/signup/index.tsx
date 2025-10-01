@@ -1,243 +1,391 @@
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, TextInput } from 'react-native'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import React, { useState } from 'react'
-import { Controller, useForm } from "react-hook-form";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
-import { router } from 'expo-router';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
+  Dimensions,
+  SafeAreaView,
+  StatusBar,
+  Alert,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+// Importa Iconos de Feather para los inputs y botones
+import Icon from "react-native-vector-icons/Feather";
+// Importa SVG para la curva de onda
+import Svg, { Path } from "react-native-svg";
 
-interface SignUpFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+const { width, height } = Dimensions.get("window");
+const TOP_HEIGHT = height * 0.45; // Altura de la sección superior
 
-export default function SignUpScreen() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+const COLORS = {
+  background: "white", // Fondo general gris claro/azul claro
+  cardBackground: "white",
+  textPrimary: "#000",
+  textSecondary: "#6C757D",
+  // Degradado para las formas abstractas y el botón (Morado a Azul/Verde)
+  gradientStart: "#7C4DFF", // Morado
+  gradientEnd: "#0DD169", // Azul claro/Cian
+  inputBorder: "#E0E0E0",
+  starColor: "#FFC107",
+  iconColor: "#6C757D",
+};
 
-  const { control, formState, handleSubmit, watch } = useForm<SignUpFormData>({
-    mode: "onChange",
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: ""
-    },
-  })
+const LoginScreen = () => {
+  const [fullName, setFullName] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-  const onSubmit = (data: SignUpFormData) => {
-    console.log('Datos del registro:', data);
-    // Aquí va tu lógica de registro (API call, Firebase, etc.)
-  }
+  const handleLogin = () => {
+    if (!fullName || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    Alert.alert("Success", `Welcome back, ${fullName}!`);
+  };
+
 
   return (
-    <SafeAreaProvider className='flex-1 bg-orange-300'>
-      <SafeAreaView className='flex-1'>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === "android" ? "padding" : "height"}
-          className='flex-1'
-        >
-          <ScrollView 
-            className="flex-1 px-6"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 20 }}
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor="#2e8b57" />
+
+      {/* 1. Parte Superior con Fondo y Curva SVG */}
+      <View style={styles.topContainer}>
+        {/* Botón de retroceso */}
+        <TouchableOpacity style={styles.backButton}>
+          <Icon name="chevron-left" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* --- Degradado de Fondo Superior --- */}
+        <LinearGradient
+          colors={["white", COLORS.background]} // Degradado muy sutil
+          style={styles.backgroundGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        />
+
+        {/* --- Formas Abstractas (Círculos con Degradado) --- */}
+
+        
+        {/* Círculo central-superior */}
+        <LinearGradient
+          colors={[COLORS.gradientEnd, "#478F69"]} // Cian y Verde pálido
+          style={[styles.abstractShape, styles.shape2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+
+        
+      </View>
+
+      {/* 2. Contenido del Formulario */}
+      <View style={styles.formContainer}>
+        {/* Encabezado del Formulario */}
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.welcomeText}>Register account</Text>
+          {/* Icono de hoja con emoji (puedes reemplazar por SVG) */}
+          <Text style={styles.leafIcon}>🌿</Text>
+        </View>
+        <Text style={styles.subTitle}>Create your new account</Text>
+
+        {/* Campo de Nombre Completo */}
+        <View style={styles.inputView}>
+          <Icon
+            name="user"
+            size={20}
+            color="#005728"
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Full Name"
+            placeholderTextColor="#888"
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="words"
+          />
+        </View>
+
+        <View style={styles.inputView}>
+          <Icon
+            name="mail"
+            size={20}
+            color="#005728"
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="user@gmail.com"
+            placeholderTextColor="#888"
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="words"
+          />
+        </View>
+
+        {/* Campo de Contraseña */}
+        <View style={styles.inputView}>
+          <Icon
+            name="lock"
+            size={20}
+            color="#005728"
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="........."
+            placeholderTextColor="#888"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+         
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeIcon}
           >
-            <View className="mt-16 mb-2">
-              <Text className='text-3xl font-poppins-bold text-orange-600 mb-2'>
-                Create Account
-              </Text>
-            </View>
-            
-            <View className='bg-white p-4 rounded-lg mb-6'>
-              <Text className='text-sm font-inter text-gray-400'>
-                Complete the form to register
-              </Text>
-            </View>
+            <Icon
+              name={showPassword ? "eye" : "eye-off"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        </View>
+        
+        {/* Botón de Login */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Registrar</Text>
+        </TouchableOpacity>
 
-            {/* Nombre */}
-            <View className='mt-4'>
-              <Text className="text-gray-800 text-sm mb-2">Full Name</Text>
-              <Controller
-                control={control}
-                name="name"
-                rules={{ required: "Name is required" }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <View>
-                    <View className={`flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border ${formState.errors.name ? "border-red-500" : "border-gray-200"}`}>
-                      <Ionicons name="person-outline" size={20} color="#9CA3AF" />
-                      <TextInput 
-                        className="flex-1 ml-3 text-gray-800 font-poppins"
-                        placeholder="Enter your name"
-                        placeholderTextColor="#9CA3AF"
-                        value={value}
-                        onChangeText={onChange}
-                        onBlur={onBlur}
-                      />
-                    </View>
-                    {formState.errors.name && (
-                      <Text className="text-red-500 text-sm font-poppins mt-1">
-                        {formState.errors.name.message}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              />
+        {/* Opciones de Recordar y Olvidé Contraseña */}
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity
+            onPress={() => setRememberMe(!rememberMe)}
+            style={styles.rememberMe}
+          >
+            <Icon
+              name={rememberMe ? "check-square" : "square"}
+              size={18}
+              color={rememberMe ? "#2e8b57" : "#aaa"}
+              style={{ marginRight: 5 }}
+            />
+            <Text style={styles.rememberMeText}>Remember Me</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.forgotPassword}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
 
-              {/* Email */}
-              <View className="mt-6">
-                <Text className="text-gray-800 text-sm mb-2">Email</Text>
-                <Controller
-                  control={control}
-                  name="email"
-                  rules={{
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Please enter a valid email"
-                    }
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <View>
-                      <View className={`flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border ${formState.errors.email ? "border-red-500" : "border-gray-200"}`}>
-                        <MaterialCommunityIcons name="email-outline" size={20} color="#9CA3AF" />
-                        <TextInput 
-                          className="flex-1 ml-3 text-gray-800 font-poppins"
-                          placeholder="Enter your email"
-                          placeholderTextColor="#9CA3AF"
-                          value={value}
-                          onChangeText={onChange}
-                          onBlur={onBlur}
-                          keyboardType="email-address"
-                          autoCapitalize="none"
-                        />
-                      </View>
-                      {formState.errors.email && (
-                        <Text className="text-red-500 text-sm font-poppins mt-1">
-                          {formState.errors.email.message}
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                />
-              </View>
 
-              {/* Password */}
-              <View className="mt-6">
-                <Text className="text-gray-800 text-sm mb-2">Password</Text>
-                <Controller
-                  control={control}
-                  name="password"
-                  rules={{
-                    required: "Password is required",
-                    minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters"
-                    }
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <View>
-                      <View className={`flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border ${formState.errors.password ? "border-red-500" : "border-gray-200"}`}>
-                        <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-                        <TextInput 
-                          className="flex-1 ml-3 text-gray-800 font-poppins"
-                          placeholder="Enter your password"
-                          placeholderTextColor="#9CA3AF"
-                          value={value}
-                          onChangeText={onChange}
-                          onBlur={onBlur}
-                          secureTextEntry={!showPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                          <Ionicons
-                            name={showPassword ? "eye-outline" : 'eye-off-outline'}
-                            size={20}
-                            color='#9CA3AF'
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      {formState.errors.password && (
-                        <Text className="text-red-500 text-sm font-poppins mt-1">
-                          {formState.errors.password.message}
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                />
-              </View>
+        {/* Enlace de Registro */}
+        <View style={styles.signUpContainer}>
+          <Text style={styles.signUpText}>Don't have account? </Text>
+          <TouchableOpacity>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
 
-              {/* Confirm Password */}
-              <View className="mt-6">
-                <Text className="text-gray-800 text-sm mb-2">Confirm Password</Text>
-                <Controller
-                  control={control}
-                  name="confirmPassword"
-                  rules={{
-                    required: "Confirm your password",
-                    validate: (value) =>
-                      value === watch("password") || "Passwords do not match"
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <View>
-                      <View className={`flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border ${formState.errors.confirmPassword ? "border-red-500" : "border-gray-200"}`}>
-                        <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-                        <TextInput 
-                          className="flex-1 ml-3 text-gray-800 font-poppins"
-                          placeholder="Confirm your password"
-                          placeholderTextColor="#9CA3AF"
-                          value={value}
-                          onChangeText={onChange}
-                          onBlur={onBlur}
-                          secureTextEntry={!showConfirmPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                          <Ionicons
-                            name={showConfirmPassword ? "eye-outline" : 'eye-off-outline'}
-                            size={20}
-                            color='#9CA3AF'
-                          />
-                        </TouchableOpacity>
-                      </View>
-                      {formState.errors.confirmPassword && (
-                        <Text className="text-red-500 text-sm font-poppins mt-1">
-                          {formState.errors.confirmPassword.message}
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                />
-              </View>
+// ---
+// Estilos
+// ---
 
-              {/* Botón de registro */}
-              <TouchableOpacity 
-                className={`rounded-xl py-4 mt-8 ${
-                  formState.isValid ? "bg-orange-600" : "bg-orange-200"
-                }`} 
-                onPress={handleSubmit(onSubmit)}
-                disabled={!formState.isValid}
-              >
-                <Text className={`text-center font-poppins-bold text-lg ${
-                  formState.isValid ? "text-white" : "text-orange-400"
-                }`}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor:"white"
+  },
 
-              {/* Ya tienes cuenta */}
-              <View className="flex-row justify-center mt-8">
-                <Text className="text-gray-600 font-poppins">
-                  Already have an account?{' '}
-                </Text>
-                <TouchableOpacity onPress={() => router.push("/(routes)/login/")}>
-                  <Text className="text-orange-600 font-poppins-bold">
-                    Sign In
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>        
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </SafeAreaProvider>
-  )
-}
+  // Placeholder para imagen de fondo
+  placeholderBackground: {
+    flex: 1,
+    backgroundColor: "#2e8b57",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  placeholderText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  // --- Parte Superior ---
+  topContainer: {
+    height: TOP_HEIGHT,
+    width: "100%",
+    position: "relative",
+    backgroundColor:"blue"
+  },
+  imageBackground: {
+    width: "100%",
+    height: "80%",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  imageStyle: {
+    opacity: 0.8,
+    resizeMode: "cover",
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 10,
+  },
+
+ 
+
+  // --- Formulario ---
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: 30,
+    marginTop:-300
+    
+  },
+  headerTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+  },
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#005728",
+    letterSpacing: 0.5,
+    marginRight: 10,
+  },
+  leafIcon: {
+    fontSize: 25,
+    color: "#2e8b57",
+  },
+  subTitle: {
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 35,
+    alignSelf: "center",
+  },
+  inputView: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#e5ebe7ff",
+    borderRadius: 10,
+    height: 50,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+  inputIcon: {
+    marginRight: 15,
+  },
+  textInput: {
+    flex: 1,
+    color: "#333",
+    height: "100%",
+  },
+  eyeIcon: {
+    padding: 5,
+  },
+  optionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 5,
+  },
+  rememberMe: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rememberMeText: {
+    fontSize: 14,
+    color: "#555",
+  },
+  forgotPassword: {
+    fontSize: 14,
+    color: "#2e8b57",
+    fontWeight: "600",
+  },
+  loginButton: {
+    backgroundColor: "#2e8b57",
+    borderRadius: 10,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#2e8b57",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+    marginBottom: 20,
+  },
+  loginButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  signUpContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  signUpText: {
+    color: "#888",
+  },
+  signUpLink: {
+    color: "#2e8b57",
+    fontWeight: "bold",
+  },
+  //
+  //
+  backgroundGradient: {
+    position: "absolute",
+    width: "100%",
+    height: height * 0.5, // Cubre la mitad superior de la pantalla
+    top: 0,
+  },
+
+  // --- Estilos de las Formas Abstractas ---
+  abstractShape: {
+    position: "absolute",
+    borderRadius: 999, // Para hacer círculos/óvalos
+    opacity: 0.8,
+  },
+  shape1: {
+    // Círculo superior izquierda (grande)
+    width: 250,
+    height: 250,
+    top: -80,
+    left: -50,
+    transform: [{ scaleX: 1.2 }], // Para hacerlo un poco más ovalado
+  },
+  shape2: {
+    // Círculo superior derecha (mediano)
+    width: 180,
+    height: 180,
+    top: -50,
+    right: -50,
+  },
+  shape3: {
+    // Círculo central (pequeño)
+    width: 120,
+    height: 120,
+    top: 100,
+    left: width / 2 - 60, // Centrado
+    opacity: 0.7,
+  },
+});
+
+export default LoginScreen;

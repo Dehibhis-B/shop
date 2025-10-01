@@ -5,6 +5,7 @@ import 'react-native-reanimated';
 import { useFonts } from 'expo-font';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import '../globals.css'
 
@@ -34,13 +35,19 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(routes)/login/index" options={{headerShown: false}}/>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
+        
+      <GestureHandlerRootView>
+
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(routes)/login/index" options={{headerShown: false}}/>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      
+      </GestureHandlerRootView>
+      
     </ThemeProvider>
   );
 }

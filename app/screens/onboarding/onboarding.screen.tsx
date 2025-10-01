@@ -18,7 +18,7 @@ export default function OnboardingScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@/assets/images/onboarding.jpg")}
+        source={require("@/assets/images/green.jpeg")}
         style={styles.backgroundImage}
       />
       <LinearGradient
@@ -33,7 +33,7 @@ export default function OnboardingScreen() {
         </Text>
         <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
           <LinearGradient
-            colors={["#FF6B6B", "#4A66F0"]} // ← Colores HEX válidos
+            colors={["rgba(255, 255, 255, 0.2)", "rgba(255,255,255,0.3)"]} // ← Colores HEX válidos
             start={{ x: 0, y: 0 }} // ← Objeto con x, y
             end={{ x: 1, y: 0 }} // ← Objeto con x, y
             style={styles.buttonGradient}
