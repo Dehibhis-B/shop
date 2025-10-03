@@ -1,9 +1,10 @@
 import React from 'react'
-import OnboardingScreen from './screens/onboarding/onboarding.screen';
+import { Redirect } from 'expo-router'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function Index() {
-  return ( <OnboardingScreen/>
-    
-  )
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
+  return <Redirect href={isAuthenticated ? '/(tabs)' : '/(routes)/login'} />;
 }
 

@@ -4,9 +4,11 @@ import React, { useState } from 'react'
 import { Controller, useForm } from "react-hook-form";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { router } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner-native'
 
 interface LoginFormData {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -16,15 +18,21 @@ export default function LoginScreen() {
   const { control, formState, handleSubmit } = useForm<LoginFormData>({
     mode: "onChange",
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   })
 
+  const { signIn } = useAuth();
+
   // Función para manejar el login
-  const onSubmit = (data: LoginFormData) => {
-    console.log('Datos del formulario:', data);
-    // Aquí iría tu lógica de login
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await signIn(data.username, data.password);
+      router.replace('/(tabs)');
+    } catch (err: any) {
+      toast.error('Credenciales inválidas o error de conexión');
+    }
   }
 
   // Función para login con Google
@@ -64,39 +72,34 @@ export default function LoginScreen() {
             </View>
 
             <View className='mt-4'>
-              <Text className="text-gray-800 text-sm mb-2">Email:</Text>
+              <Text className="text-gray-800 text-sm mb-2">Usuario:</Text>
               <Controller
                 control={control}
-                name="email"
+                name="username"
                 rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Please enter a valid email"
-                  }
+                  required: "Usuario es requerido",
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <View>
                     <View className={`flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border ${formState.errors.email ? "border-red-500" : "border-gray-200"}`}>
                       <MaterialCommunityIcons
-                        name="email-outline"
+                        name="account-outline"
                         size={20}
                         color={"#9CA3AF"}
                       />
                       <TextInput 
                         className="flex-1 ml-3 text-gray-800 font-poppins"
-                        placeholder="Enter your email"
+                        placeholder="Ingrese usuario"
                         placeholderTextColor="#9CA3AF"
                         value={value}
                         onChangeText={onChange}
                         onBlur={onBlur}
-                        keyboardType="email-address"
                         autoCapitalize="none"
                       />
                     </View>
-                    {formState.errors.email && (
+                    {formState.errors.username && (
                       <Text className="text-red-500 text-sm font-poppins mt-1">
-                        {formState.errors.email.message}
+                        {formState.errors.username.message}
                       </Text>
                     )}
                   </View>
